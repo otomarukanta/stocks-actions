@@ -45,6 +45,7 @@ jobs:
   transform:
     name: Transform Stocks Data
     runs-on: ubuntu-latest
+    needs: collect
     steps:
       - uses: actions/checkout@v2
         with:
