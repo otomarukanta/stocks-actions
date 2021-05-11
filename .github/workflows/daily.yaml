@@ -39,7 +39,7 @@ jobs:
           git config --local user.name "otomarukanta"
           git add .
           git remote set-url --push origin https://otomarukanta:$GITHUB_TOKEN@github.com/otomarukanta/stocks-data
-          git commit -m "Update Data"
+          git commit -m "Update Data" || true
           git push
 
   transform:
@@ -77,5 +77,5 @@ jobs:
           git config --local user.name "otomarukanta"
           git add .
           git remote set-url --push origin https://otomarukanta:$GITHUB_TOKEN@github.com/otomarukanta/stocks-data
-          git commit -m "Update Data"
+          git commit -m "Update Data" || true
           git push
