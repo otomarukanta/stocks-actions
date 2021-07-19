@@ -65,6 +65,7 @@ jobs:
         with:
           path: data/raw
           destination: otomarukanta-stocks-raw
+          parent: false
 
   transform:
     name: Transform Stocks Data
