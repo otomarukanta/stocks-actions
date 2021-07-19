@@ -38,11 +38,6 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
         run: |
           pipenv run python main.py
-      - name: Collect ohlc 1m data
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        run: |
-          pipenv run python collect_ohlc_1m.py
       - name: Commit data
         env:
           GITHUB_TOKEN: ${{ secrets.FULL_GITHUB_TOKEN }}
@@ -54,6 +49,22 @@ jobs:
           git remote set-url --push origin https://otomarukanta:$GITHUB_TOKEN@github.com/otomarukanta/stocks-data
           git commit -m "Update Data" || true
           git push
+          cd ../
+      - name: Collect ohlc 1m data
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        run: |
+          pipenv run python collect_ohlc_1m.py
+      - name: GCP Auth
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - name: Upload files to GCS
+        uses: google-github-actions/upload-cloud-storage@main
+        with:
+          path: data/raw
+          destination: otomarukanta-stocks-raw
 
   transform:
     name: Transform Stocks Data
