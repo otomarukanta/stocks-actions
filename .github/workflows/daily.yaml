@@ -66,6 +66,11 @@ jobs:
           path: data/raw
           destination: otomarukanta-stocks-raw
           parent: false
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "collect"
 
   transform:
     name: Transform Stocks Data
@@ -110,3 +115,8 @@ jobs:
           git remote set-url --push origin https://otomarukanta:$GITHUB_TOKEN@github.com/otomarukanta/stocks-data
           git commit -m "Update Data" || true
           git push
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "transform"
