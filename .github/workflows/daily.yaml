@@ -72,6 +72,56 @@ jobs:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           title: "collect"
 
+  collect-base:
+    name: Collect Base Data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.FULL_GITHUB_TOKEN }}
+          repository: otomarukanta/stocks-collector
+      - uses: actions/checkout@v2
+        with:
+          path: data
+          token: ${{ secrets.FULL_GITHUB_TOKEN }}
+          repository: otomarukanta/stocks-data
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9
+      - name: Setup pipenv
+        run: |
+          python -m pip install --upgrade pip
+          pip install pipenv --upgrade-strategy=only-if-needed
+      - name: Cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.local/share/virtualenvs
+          key: ${{ runner.os }}-python-${{ steps.setup-python.outputs.python-version }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+      - name: Install dependencies
+        run: pipenv install --dev
+      - name: Collect kabutan
+        env:
+          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
+        run: |
+          pipenv run python collect_kabutan.py
+      - name: GCP Auth
+        uses: google-github-actions/setup-gcloud@master
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+      - name: Upload files to GCS
+        uses: google-github-actions/upload-cloud-storage@main
+        with:
+          path: data/raw
+          destination: otomarukanta-stocks-raw
+          parent: false
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          title: "collect kabutan"
+
   transform:
     name: Transform Stocks Data
     runs-on: ubuntu-latest
