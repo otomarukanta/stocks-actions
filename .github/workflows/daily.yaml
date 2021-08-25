@@ -50,11 +50,6 @@ jobs:
           git commit -m "Update Data" || true
           git push
           cd ../
-      - name: Collect ohlc 1m data
-        env:
-          SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
-        run: |
-          pipenv run python collect_ohlc_1m.py
       - uses: sarisia/actions-status-discord@v1
         if: always()
         with:
