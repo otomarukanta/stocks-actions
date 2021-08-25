@@ -179,12 +179,12 @@ jobs:
         with:
           path: data
           token: ${{ secrets.FULL_GITHUB_TOKEN }}
-          repository: otomarukanta/stocks-data-public
+          repository: otomarukanta/stocks-data
       - uses: actions/checkout@v2
         with:
           path: public-data
           token: ${{ secrets.FULL_GITHUB_TOKEN }}
-          repository: otomarukanta/stocks-data
+          repository: otomarukanta/stocks-data-public
       - name: Commit data
         env:
           GITHUB_TOKEN: ${{ secrets.FULL_GITHUB_TOKEN }}
